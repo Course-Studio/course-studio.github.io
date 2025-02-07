@@ -6,6 +6,7 @@ const githubBase = "https://course-studio.github.io/img/";
 if (window.location.href.includes("course-player-demo-course-studio")) {
   formatLessonTitles();
   formatModuleTitles();
+  replaceModuleProgressCircle();
   loadStyles();
   insertDashboardLink();
   insertNavPopup();
@@ -84,22 +85,80 @@ function formatModuleTitles() {
   }
 }
 
+function replaceModuleProgressCircle() {
+  const chapterContainers = document.querySelectorAll(
+    ".course-player__chapters-item"
+  );
+  if (chapterContainers.length > 0) {
+    chapterContainers.forEach((container) => {
+      const thncProgessCircle = container.querySelector(
+        ".course-player__progress"
+      );
+      const completionRate = container.querySelector(
+        ".course-player__chapter-item__completion"
+      );
+      if (completionRate) {
+        completionRate.style.display = "none";
+
+        const percentCompleted = document.querySelector(
+          "[data-percentage-completion]"
+        );
+        let percentage = 100;
+
+        if (percentCompleted) {
+          percentage = percentCompleted.getAttribute(
+            "data-percentage-completion"
+          );
+
+          const progressCircle = document.createElement("div");
+          progressCircle.className = "card";
+          progressCircle.innerHTML = `
+                <div class="percent">
+                  <svg>
+                    <circle cx="20" cy="20" r="20"></circle>
+                    <circle cx="20" cy="20" r="20" style="--percent: ${percentage};"></circle>
+                  </svg>
+                  <div class="number">
+                    <h3>${percentage}<span>%</span></h3>
+                  </div>
+                </div>
+              `;
+
+          const completedProgressCircle = document.createElement("div");
+          completedProgressCircle.className = "card";
+          completedProgressCircle.innerHTML = `
+                <div class="percent">
+                  <svg>
+                    <circle cx="20" cy="20" r="20" style="fill: #0057B8;"></circle>
+                  </svg>
+                  <i class="toga-icon toga-icon-checkmark" role="img" aria-label="Completed"></i>
+                </div>
+              `;
+
+          if (percentage == 100) {
+            thncProgessCircle.replaceWith(completedProgressCircle);
+          } else {
+            thncProgessCircle.replaceWith(progressCircle);
+          }
+        }
+      }
+    });
+  } else {
+    setTimeout(replaceModuleProgressCircle, 500);
+  }
+}
+
 function insertDashboardLink() {
-  // Select the container to append the link to
   const container = document.querySelector("div._container_v3q4ce");
 
   if (container) {
-    // Create a new link element
     const newLink = document.createElement("a");
     const popupBtn = document.createElement("a");
     popupBtn.classList.add("mobile-popup-trigger");
-    newLink.href = "/enrollments"; // Set the href for the link
-    newLink.textContent = "Return to Dashboard"; // Set the text for the link
-
-    // Optionally, add a class for styling
+    newLink.href = "/enrollments";
+    newLink.textContent = "Return to Dashboard";
     newLink.classList.add("header-dashboard-link");
 
-    // Append the new link to the container
     container.appendChild(newLink);
     container.appendChild(popupBtn);
   } else {
@@ -205,13 +264,13 @@ function popupCarousel() {
   const mobilePopupTrigger = document.getElementsByClassName(
     "mobile-popup-trigger"
   )[0];
-  const popupClose = document.getElementsByClassName("popup-close")[0];
+  const popupCloseBtn = document.getElementsByClassName("popup-close")[0];
   const slides = document.getElementsByClassName("slide");
   const navBtns = Array.from(document.getElementsByClassName("nav-btn"));
   const navNextBtn = document.getElementsByClassName("nav-next")[0];
   let slideIndex = 0;
 
-  if (navBtns.length < 0 || slides < 0 || !popupClose || !navNextBtn) {
+  if (navBtns.length < 0 || slides < 0 || !popupCloseBtn || !navNextBtn) {
     setTimeout(popupCarousel, 500);
   }
 
@@ -220,7 +279,7 @@ function popupCarousel() {
   popupTrigger.addEventListener("click", () => openPopupCarousel());
   mobilePopupTrigger.addEventListener("click", () => openPopupCarousel());
 
-  popupClose.addEventListener("click", () => closePopupCarousel());
+  popupCloseBtn.addEventListener("click", () => closePopupCarousel());
 
   navNextBtn.addEventListener("click", function () {
     if (slideIndex < slides.length - 1) {
