@@ -91,7 +91,7 @@
   display: inline-block;
   height: 19px;
   width: 16px;
-  top: 5px;
+  top: 13px;
   margin-right: 9px;
   position: absolute;
   left: 13px;
@@ -423,6 +423,7 @@ div.card > div > i {
   background: #f1f4f7;
   border: none !important;
   padding: 32px 48px;
+  flex-direction: row-reverse;
 }
 
 body .course-player__content-header__actions {
@@ -497,8 +498,25 @@ body .course-player__content-header__actions {
     display: block;
   }
 
+  .course-player__content-header__title {
+    position: relative;
+    top: 19px;
+    left: 54px;
+    display: flex;
+    gap: 10px;
+    flex-direction: row;
+  }
+
   .course-player__content-header {
     display: none;
+  }
+
+  .course-player__content-header__title {
+    position: relative;
+    left: 59px;
+    top: 20px;
+    display: flex;
+    gap: 7px;
   }
 }
 
@@ -535,4 +553,8 @@ body .course-player__content-item:last-child {
 .content-item__title {
   height: -webkit-fill-available;
   justify-content: center;
+}
+
+._content-header__title-container_h7ytgy {
+  display: none;
 }

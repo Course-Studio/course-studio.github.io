@@ -4,8 +4,8 @@ const githubBase = "https://course-studio.github.io/img/";
 
 // only run customizations in demo player for now
 if (window.location.href.includes("course-player-demo-course-studio")) {
-  formatLessonTitles();
   formatModuleTitles();
+  formatLessonTitles();
   replaceModuleProgressCircle();
   loadStyles();
   insertDashboardLink();
@@ -17,7 +17,9 @@ if (window.location.href.includes("course-player-demo-course-studio")) {
     if (typeof CoursePlayerV2 !== "undefined") {
       CoursePlayerV2.on("hooks:contentDidChange", function (data) {
         styleCommunityPage();
-        updatePlayerHeader();
+        setTimeout(() => {
+          updatePlayerHeader();
+        }, 500);
       });
     }
   });
@@ -29,6 +31,12 @@ function formatLessonTitles() {
 
   if (list.length > 0) {
     list.forEach((item) => {
+      const contentTypeLabel = item.querySelector(".content-item__details");
+
+      if (contentTypeLabel) {
+        contentTypeLabel.remove();
+      }
+
       const text = item.textContent.trim();
 
       if (text.includes(":")) {
@@ -95,45 +103,42 @@ function formatModuleTitles() {
   }
 }
 
+let retryCount = 0;
+const maxRetries = 10;
+
 function updatePlayerHeader() {
   const activeLink = document.querySelector(
     "a.course-player__content-item__link.active"
   );
-
   const coursePlayerHeader = document.querySelector(
     ".course-player__content-header"
   );
+  const mobileContainer = document.querySelector("._container_v3q4ce");
 
-  if (activeLink && coursePlayerHeader) {
+  if (activeLink && coursePlayerHeader && mobileContainer) {
     const titleElement = activeLink.querySelector(".content-item__title");
 
     if (titleElement) {
-      let thncHeaderLabel = document.querySelector(
-        "._content-header__title-container_h7ytgy"
+      const existingHeader = coursePlayerHeader.querySelector(
+        ".cs-content-header-title"
+      );
+      const existingMobileHeader = mobileContainer.querySelector(
+        ".cs-content-header-title"
       );
 
-      const csHeaderLabel = document.querySelector(
-        ".course-player__content-header__title"
-      );
+      if (existingHeader) existingHeader.remove();
+      if (existingMobileHeader) existingMobileHeader.remove();
 
-      // Remove existing header if it exists
-      if (thncHeaderLabel) {
-        thncHeaderLabel.remove();
-      }
+      let newLabel = document.createElement("div");
+      newLabel.className =
+        "course-player__content-header__title cs-content-header-title";
+      newLabel.innerHTML = titleElement.innerHTML;
 
-      if (csHeaderLabel) {
-        csHeaderLabel.remove();
-      }
-
-      // Create a new header element and set its content
-      thncHeaderLabel = document.createElement("div");
-      thncHeaderLabel.className = "course-player__content-header__title";
-      thncHeaderLabel.innerHTML = titleElement.innerHTML;
-
-      // Append the new title element to the header
-      coursePlayerHeader.appendChild(thncHeaderLabel);
+      coursePlayerHeader.appendChild(newLabel);
+      mobileContainer.appendChild(newLabel.cloneNode(true));
     }
-  } else {
+  } else if (retryCount < maxRetries) {
+    retryCount++;
     setTimeout(updatePlayerHeader, 500);
   }
 }
@@ -330,6 +335,7 @@ function popupCarousel() {
     !navNextBtn
   ) {
     setTimeout(popupCarousel, 500);
+    return;
   }
 
   navBtns[0].classList.add("active");
@@ -603,33 +609,4 @@ function styleCommunityPage() {
   applyCommunityStyles(communityIframe);
   injectCommunityCard(communityIframe);
   moveCommentInputToTop(communityIframe);
-}
-
-function updatePlayerHeader() {
-  const activeLink = document.querySelector(
-    "a.course-player__content-item__link.active"
-  );
-
-  const coursePlayerHeader = document.querySelector(
-    ".course-player__content-header"
-  );
-
-  if (activeLink && coursePlayerHeader) {
-    const titleElement = activeLink.querySelector(".content-item__title");
-
-    const thncHeaderLabel = coursePlayerHeader.querySelector(
-      ".course-player__content-header__title"
-    );
-
-    if (thncHeaderLabel) {
-      thncHeaderLabel.remove();
-    }
-
-    if (titleElement) {
-      coursePlayerHeader.appendChild(moduleSpan.cloneNode(true));
-      coursePlayerHeader.appendChild(nameSpan.cloneNode(true));
-    }
-  } else {
-    setTimeout(updatePlayerHeader, 500);
-  }
 }
