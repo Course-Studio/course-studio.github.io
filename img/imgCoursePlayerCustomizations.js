@@ -11,13 +11,13 @@ if (window.location.href.includes("course-player-demo-course-studio")) {
   insertDashboardLink();
   insertNavPopup();
   popupCarousel();
-  styleCommunityPage();
 
   // community page styles need to be reapplied on navigation
   $(function () {
     if (typeof CoursePlayerV2 !== "undefined") {
       CoursePlayerV2.on("hooks:contentDidChange", function (data) {
         styleCommunityPage();
+        updatePlayerHeader();
       });
     }
   });
@@ -92,6 +92,49 @@ function formatModuleTitles() {
     }
   } else {
     setTimeout(formatModuleTitles, 500);
+  }
+}
+
+function updatePlayerHeader() {
+  const activeLink = document.querySelector(
+    "a.course-player__content-item__link.active"
+  );
+
+  const coursePlayerHeader = document.querySelector(
+    ".course-player__content-header"
+  );
+
+  if (activeLink && coursePlayerHeader) {
+    const titleElement = activeLink.querySelector(".content-item__title");
+
+    if (titleElement) {
+      let thncHeaderLabel = document.querySelector(
+        "._content-header__title-container_h7ytgy"
+      );
+
+      const csHeaderLabel = document.querySelector(
+        ".course-player__content-header__title"
+      );
+
+      // Remove existing header if it exists
+      if (thncHeaderLabel) {
+        thncHeaderLabel.remove();
+      }
+
+      if (csHeaderLabel) {
+        csHeaderLabel.remove();
+      }
+
+      // Create a new header element and set its content
+      thncHeaderLabel = document.createElement("div");
+      thncHeaderLabel.className = "course-player__content-header__title";
+      thncHeaderLabel.innerHTML = titleElement.innerHTML;
+
+      // Append the new title element to the header
+      coursePlayerHeader.appendChild(thncHeaderLabel);
+    }
+  } else {
+    setTimeout(updatePlayerHeader, 500);
   }
 }
 
@@ -280,7 +323,12 @@ function popupCarousel() {
   const navNextBtn = document.getElementsByClassName("nav-next")[0];
   let slideIndex = 0;
 
-  if (navBtns.length < 0 || slides < 0 || !popupCloseBtn || !navNextBtn) {
+  if (
+    navBtns.length == 0 ||
+    slides.length == 0 ||
+    !popupCloseBtn ||
+    !navNextBtn
+  ) {
     setTimeout(popupCarousel, 500);
   }
 
@@ -555,4 +603,33 @@ function styleCommunityPage() {
   applyCommunityStyles(communityIframe);
   injectCommunityCard(communityIframe);
   moveCommentInputToTop(communityIframe);
+}
+
+function updatePlayerHeader() {
+  const activeLink = document.querySelector(
+    "a.course-player__content-item__link.active"
+  );
+
+  const coursePlayerHeader = document.querySelector(
+    ".course-player__content-header"
+  );
+
+  if (activeLink && coursePlayerHeader) {
+    const titleElement = activeLink.querySelector(".content-item__title");
+
+    const thncHeaderLabel = coursePlayerHeader.querySelector(
+      ".course-player__content-header__title"
+    );
+
+    if (thncHeaderLabel) {
+      thncHeaderLabel.remove();
+    }
+
+    if (titleElement) {
+      coursePlayerHeader.appendChild(moduleSpan.cloneNode(true));
+      coursePlayerHeader.appendChild(nameSpan.cloneNode(true));
+    }
+  } else {
+    setTimeout(updatePlayerHeader, 500);
+  }
 }
