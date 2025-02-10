@@ -11,6 +11,16 @@ if (window.location.href.includes("course-player-demo-course-studio")) {
   insertDashboardLink();
   insertNavPopup();
   popupCarousel();
+  styleCommunityPage();
+
+  // community page styles need to be reapplied on navigation
+  $(function () {
+    if (typeof CoursePlayerV2 !== "undefined") {
+      CoursePlayerV2.on("hooks:contentDidChange", function (data) {
+        styleCommunityPage();
+      });
+    }
+  });
 }
 
 // format lesson titles to follow design convention
@@ -316,4 +326,233 @@ function popupCarousel() {
   function openPopupCarousel() {
     popupContainer.classList.remove("hidden");
   }
+}
+
+function moveCommentInputToTop(communityIframe) {
+  if (
+    !communityIframe ||
+    !communityIframe.contentWindow ||
+    !communityIframe.contentWindow.document
+  ) {
+    setTimeout(() => moveCommentInputToTop(communityIframe), 500);
+    return;
+  }
+
+  var iframeDoc =
+    communityIframe.contentDocument || communityIframe.contentWindow.document;
+  var commentInput = iframeDoc.querySelector(
+    ".Post_comment-input__wrapper__76GeJ"
+  );
+  var postDetail = iframeDoc.querySelector(".comment-list");
+
+  if (!commentInput || !postDetail) {
+    setTimeout(() => moveCommentInputToTop(communityIframe), 500);
+    return;
+  }
+
+  // choosing to clone element due to conflicts
+  // with thnc react application
+  var clonedCommentInput = commentInput.cloneNode(true);
+  postDetail.insertBefore(clonedCommentInput, postDetail.firstChild);
+  commentInput.style.display = "none";
+}
+
+function applyCommunityStyles(communityIframe) {
+  try {
+    if (
+      !communityIframe ||
+      !communityIframe.contentWindow ||
+      !communityIframe.contentWindow.document
+    ) {
+      setTimeout(() => applyCommunityStyles(communityIframe), 500);
+      return;
+    }
+
+    var iframeDoc =
+      communityIframe.contentDocument || communityIframe.contentWindow.document;
+    var head = iframeDoc.head;
+
+    if (head) {
+      var style = document.createElement("style");
+      style.type = "text/css";
+      style.textContent = `
+        ._communityId__community-wrapper__ODtDm {
+            grid-row-gap: 0px !important;
+        }
+        
+        .MobileMenu_mobile-menu__wrapper__EHtIM {
+            display: none; 
+        }
+        .TopBarMobilePostPage_comment-top-bar-mobile__XSXZv {
+            display: none;
+        }
+        ._communityId__community-wrapper--post-detail__ZAwgg {
+            top: 0 !important;
+        }
+        .Comment_comment__aN_9n {
+            background-color: #F1F4F7;
+        }
+        .Comment_comment__detail__Ta51D,
+        .Comment_comment__container__RXGsC,
+        .ReplyThread_comment-list__earvV,
+        .ReplyThread_comment-input__wrapper__fB0uk,
+        .ReplyThread_comment-list__earvV {
+            background-color: #F1F4F7 !important;
+        }
+        .comment-list {
+            border-radius: 12px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+        
+        div.course-community-card-container > div > img {
+            width: 232px;
+            border-radius: 12px 12px 0px 0px;
+        }
+        
+        .Post_post__container__UsNWu {
+            display: flex;
+            gap: 63px;
+        }
+        
+        .course-community-card-container {
+            border-radius: 12px;
+            border: 1px solid #DCE3EB;
+            height: fit-content;
+            margin: 24px 24px 0px 0px;
+        }
+        
+        div.course-community-card-container > div > div {
+            padding: 16px;
+        }
+        
+        div.course-community-card-container > div > div > p {
+            font-weight: 800;
+            margin: 0px 0 16px;
+        }
+        
+        div.course-community-card-container > div > div > a {
+            text-decoration: none;
+            color: #0057B8;
+        }
+        
+        ._communityId__community-wrapper--post-detail__ZAwgg {
+            max-height: 100vh;
+        }
+        
+        .UserDetail_user-detail__moderator-badge__7a3zl,
+        .UserDetail_user-detail__edited__2YHcY,
+        .CommentList_comment-list-button__W_dvU {
+            display: none !important;
+        }
+        
+        ._communityId__community-main__tr8NM {
+            grid-area: none;
+        }
+        
+        .Post_post__container__UsNWu {
+            border-radius: 12px;
+        }
+        
+        .user-detail__time {
+            text-transform: none;
+        }
+        
+        aside,
+        ._communityId__button__breadcrumb__yYFfQ,
+        header,
+        .ReplyThread_comment-input__wrapper__fB0uk,
+        .UserDetail_user-detail__total-replies__L_ctt {
+            display: none !important;
+        }
+        
+        @media(max-width: 768px) {
+            .Post_post__container__UsNWu {
+                flex-direction: column-reverse;
+                gap: 8px;
+            }
+            
+            .course-community-card-container {
+                margin: 0;
+            }
+            
+            .course-community-card {
+                display: flex;
+            }
+            
+            div.course-community-card-container > div > img {
+                max-width: 232px;
+                border-radius: 12px 0px 0px 12px;
+            }
+        }
+      `;
+      head.appendChild(style);
+    } else {
+      setTimeout(() => applyCommunityStyles(communityIframe), 500);
+    }
+  } catch (error) {
+    setTimeout(() => applyCommunityStyles(communityIframe), 500);
+  }
+}
+
+function injectCommunityCard(communityIframe) {
+  if (
+    !communityIframe ||
+    !communityIframe.contentWindow ||
+    !communityIframe.contentWindow.document
+  ) {
+    setTimeout(() => injectCommunityCard(communityIframe), 500);
+    return;
+  }
+
+  var iframeDoc =
+    communityIframe.contentDocument || communityIframe.contentWindow.document;
+  var postContainer = iframeDoc.querySelector(".Post_post__container__UsNWu");
+
+  if (!postContainer) {
+    setTimeout(() => injectCommunityCard(communityIframe), 500);
+    return;
+  }
+
+  if (iframeDoc.querySelector(".course-community-card")) {
+    return;
+  }
+
+  var communityCardHtml = `
+    <div class="course-community-card font-rg">
+        <img src="https://cdn-themes.thinkific.com/298093/486363/X4NCLRUBQcKDvbtXzKrs_locker-room.png">
+        <div class="details">
+            <p>Explore the community</p>
+            <a href="https://learn.imgacademy.com/communities/Q29tbXVuaXR5LTM3NTU4" target="_blank">Join the Community &#8250;</a>
+        </div>
+    </div>
+  `;
+
+  var postContainerDiv = iframeDoc.createElement("div");
+  postContainerDiv.classList.add("course-community-card-container");
+  postContainerDiv.innerHTML = communityCardHtml;
+  postContainer.appendChild(postContainerDiv);
+}
+
+function styleCommunityPage() {
+  var communityIframe = [...document.querySelectorAll("iframe")].find(
+    (iframe) => iframe.title && iframe.title.includes("Locker Room")
+  );
+
+  if (!communityIframe) {
+    setTimeout(styleCommunityPage, 500);
+    return;
+  }
+
+  // thnc loading can be delayed /
+  // or instant if frame was already visited
+  communityIframe.onload = function () {
+    applyCommunityStyles(communityIframe);
+    injectCommunityCard(communityIframe);
+    moveCommentInputToTop(communityIframe);
+  };
+
+  applyCommunityStyles(communityIframe);
+  injectCommunityCard(communityIframe);
+  moveCommentInputToTop(communityIframe);
 }
