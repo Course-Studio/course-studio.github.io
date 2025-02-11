@@ -11,6 +11,7 @@ if (window.location.href.includes("course-player-demo-course-studio")) {
   insertDashboardLink();
   insertNavPopup();
   popupCarousel();
+  insertCourseImage();
 
   // community page styles need to be reapplied on navigation
   $(function () {
@@ -113,9 +114,37 @@ function updatePlayerHeader() {
   const coursePlayerHeader = document.querySelector(
     ".course-player__content-header"
   );
-  const mobileContainer = document.querySelector("._container_v3q4ce");
 
-  if (activeLink && coursePlayerHeader && mobileContainer) {
+  const mobileContainer = document.querySelector("._container_v3q4ce");
+  const chapterLists = document.getElementsByClassName(
+    "course-player__chapters-item"
+  );
+  let moduleTitle = "";
+
+  if (activeLink && coursePlayerHeader && mobileContainer && chapterLists) {
+    Array.from(chapterLists).forEach((chapter) => {
+      const activeLink = chapter.querySelector(
+        "a.course-player__content-item__link.active"
+      );
+      if (activeLink) {
+        // remove if one already exists
+        const existingModuleLabel = document.querySelector(
+          ".header-module-label"
+        );
+        if (existingModuleLabel) {
+          existingModuleLabel.remove();
+        }
+        moduleTitle = chapter.querySelector(
+          ".module-title-container"
+        ).innerText;
+        const headerModuleLabel = document.createElement("div");
+        headerModuleLabel.classList.add("header-module-label");
+        headerModuleLabel.innerHTML = moduleTitle;
+        coursePlayerHeader.appendChild(headerModuleLabel);
+        mobileContainer.appendChild(headerModuleLabel.cloneNode(true));
+      }
+    });
+
     const titleElement = activeLink.querySelector(".content-item__title");
 
     if (titleElement) {
@@ -129,12 +158,14 @@ function updatePlayerHeader() {
       if (existingHeader) existingHeader.remove();
       if (existingMobileHeader) existingMobileHeader.remove();
 
+      const headerModLabel = document.querySelector(".header-module-label");
+
       let newLabel = document.createElement("div");
       newLabel.className =
         "course-player__content-header__title cs-content-header-title";
-      newLabel.innerHTML = titleElement.innerHTML;
+      newLabel.innerHTML = titleElement.innerText;
 
-      coursePlayerHeader.appendChild(newLabel);
+      headerModLabel.appendChild(newLabel);
       mobileContainer.appendChild(newLabel.cloneNode(true));
     }
   } else if (retryCount < maxRetries) {
@@ -609,4 +640,16 @@ function styleCommunityPage() {
   applyCommunityStyles(communityIframe);
   injectCommunityCard(communityIframe);
   moveCommentInputToTop(communityIframe);
+}
+
+function insertCourseImage() {
+  const courseName = document.querySelector(".course-progress__title");
+  if (courseName) {
+    courseName.insertAdjacentHTML(
+      "afterend",
+      '<img class="course-logo" src="https://import.cdn.thinkific.com/298093/T2qKsFZuQQiki08WLZlp_Confidence%20the%20MVP%20of%20Performance.png" />'
+    );
+  } else {
+    setTimeout(insertCourseImage, 500);
+  }
 }
