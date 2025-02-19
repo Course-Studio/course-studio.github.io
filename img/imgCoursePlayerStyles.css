@@ -449,10 +449,6 @@ body .course-player__content-header__actions {
   pointer-events: none;
 }
 
-.left-drawer--open .course-player__top-bar__menu-toggle {
-  background: white;
-}
-
 /* module title styles for top bar */
 .header-module-title {
   width: 100%;
