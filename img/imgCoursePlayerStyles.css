@@ -317,9 +317,12 @@ body .course-player__content-item .toga-icon-checkmark::before {
 }
 
 /* remove community space search */
-.community-space__container,
 .course-player__user-search {
   display: none !important;
+}
+
+.community-space__container {
+  box-shadow: none !important;
 }
 
 .course-player__chapters-menu {
