@@ -560,3 +560,7 @@ body .course-player__content-item:last-child {
 .BreadCrumb_breadcrumb__B_2cq {
   display: none;
 }
+
+.community-space__container {
+  display: none;
+}
