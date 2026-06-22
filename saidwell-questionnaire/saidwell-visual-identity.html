@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saidwell Questionnaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF8;
+    --ink:#17171A;
+    --muted:#8A857B;
+    --hairline:#E7E3DA;
+    --hairline-strong:#D8D3C8;
+    --accent:#26474B;       /* deep slate-teal, used sparingly */
+    --accent-soft:#26474B14;
+    --serif:'Fraunces',Georgia,serif;
+    --grotesk:'Hanken Grotesk',-apple-system,system-ui,sans-serif;
+    --maxw:680px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--grotesk);
+    font-size:20.4px;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* progress */
+  .progress{
+    position:fixed;top:0;left:0;right:0;height:3px;
+    background:transparent;z-index:50;
+  }
+  .progress__bar{
+    height:100%;width:0%;
+    background:var(--accent);
+    transition:width .45s cubic-bezier(.22,.61,.36,1);
+  }
+  .progress__count{
+    position:fixed;top:14px;right:18px;z-index:50;
+    font-size:13.2px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);
+    background:var(--paper);padding:2px 6px;border-radius:4px;
+  }
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px 120px;}
+
+  /* intro */
+  .intro{padding:88px 0 40px;border-bottom:1px solid var(--hairline);}
+  .eyebrow{
+    font-size:14.4px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;margin:0 0 22px;
+  }
+  .mark{
+    font-family:var(--grotesk);font-weight:700;
+    font-size:clamp(52.8px,10.2vw,84px);line-height:1;
+    letter-spacing:-.03em;margin:0 0 4px;
+  }
+  .mark em{font-style:normal;color:inherit;font-weight:700;}
+  .intro__sub{
+    font-family:var(--serif);font-size:clamp(22.8px,4.1vw,27.6px);
+    font-weight:400;line-height:1.4;color:var(--ink);
+    max-width:34ch;margin:18px 0 0;
+  }
+  .lede{color:var(--muted);max-width:52ch;margin:24px 0 0;font-size:19.2px;}
+  .tip{
+    margin:26px 0 0;padding:14px 16px;border-left:2px solid var(--accent);
+    background:var(--accent-soft);font-size:17.4px;color:var(--ink);
+    border-radius:0 6px 6px 0;
+  }
+  .tip strong{font-weight:600;}
+
+  /* name */
+  .name-block{padding:38px 0;border-bottom:1px solid var(--hairline);}
+  .field-label{
+    display:block;font-size:14.4px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;margin:0 0 10px;
+  }
+  .field-label .req{color:var(--accent);}
+  input[type=text]{
+    width:100%;font-family:var(--grotesk);font-size:21.6px;color:var(--ink);
+    background:transparent;border:none;border-bottom:1.5px solid var(--hairline-strong);
+    padding:8px 2px;transition:border-color .2s;
+  }
+  input[type=text]::placeholder{color:#BDB8AD;}
+  input[type=text]:focus{outline:none;border-bottom-color:var(--accent);}
+  textarea{
+    width:100%;font-family:var(--grotesk);font-size:19.2px;color:var(--ink);line-height:1.5;
+    background:transparent;border:1px solid var(--hairline-strong);border-radius:8px;
+    padding:12px 14px;resize:vertical;min-height:84px;transition:border-color .2s;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+
+  /* questions */
+  .q{padding:42px 0;border-bottom:1px solid var(--hairline);scroll-margin-top:32px;}
+  .q__head{display:block;margin:0 0 24px;}
+  .q__num{
+    font-family:var(--grotesk);font-size:14.4px;color:var(--accent);font-weight:600;
+    letter-spacing:.16em;text-transform:uppercase;display:block;margin:0 0 8px;
+    font-variant-numeric:tabular-nums;
+  }
+  .q__title{font-size:22.8px;font-weight:600;line-height:1.35;margin:0;letter-spacing:-.01em;}
+
+  /* scale */
+  .scale{margin-top:6px;}
+  .scale__poles{
+    display:flex;justify-content:space-between;gap:18px;margin:0 0 16px;
+  }
+  .pole{font-size:16.2px;color:var(--muted);line-height:1.4;max-width:42%;}
+  .pole--right{text-align:right;}
+  .pole__chip{display:flex;margin:8px 0 14px;}
+  .pole--right .pole__chip{justify-content:flex-end;}
+  .chip-aa{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:26px;border:1px solid var(--hairline-strong);border-radius:5px;
+    font-size:20.4px;line-height:1;color:var(--ink);background:#fff;
+  }
+  .chip-aa.serif{font-family:var(--serif);font-weight:500;}
+  .chip-aa.sans{font-family:var(--grotesk);font-weight:600;}
+  .chip-swatch{display:inline-flex;border-radius:5px;overflow:hidden;border:1px solid var(--hairline-strong);height:26px;}
+  .chip-swatch span{width:13px;}
+  .scale__track{
+    position:relative;display:flex;justify-content:space-between;
+    padding:0 2px;
+  }
+  .scale__line{
+    position:absolute;top:50%;left:17px;right:17px;height:2px;
+    background:var(--hairline-strong);transform:translateY(-50%);z-index:0;
+  }
+  .scale__fill{
+    position:absolute;top:50%;left:17px;height:2px;width:0;
+    background:var(--accent);transform:translateY(-50%);z-index:1;
+    transition:width .35s cubic-bezier(.22,.61,.36,1);
+  }
+  .node{
+    position:relative;z-index:2;width:34px;height:34px;border-radius:50%;
+    border:none;background:transparent;cursor:pointer;padding:0;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .node::before{
+    content:"";width:14px;height:14px;border-radius:50%;
+    background:var(--paper);border:1.5px solid var(--hairline-strong);
+    transition:width .2s ease,height .2s ease,background .2s,border-color .2s,box-shadow .2s;
+  }
+  .node:hover::before{border-color:var(--accent);}
+  .node:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .node[aria-checked="true"]::before{
+    width:24px;height:24px;background:var(--accent);border-color:var(--accent);
+    box-shadow:0 0 0 5px var(--accent-soft);
+  }
+
+  /* binary choices */
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px;}
+  .choice{
+    text-align:left;cursor:pointer;border:1.5px solid var(--hairline-strong);
+    background:#fff;border-radius:10px;padding:18px 18px;font-family:var(--grotesk);
+    font-size:18.6px;line-height:1.4;color:var(--ink);transition:border-color .2s,background .2s,transform .12s;
+  }
+  .choice:hover{border-color:var(--accent);}
+  .choice:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .choice[aria-checked="true"]{border-color:var(--accent);background:var(--accent-soft);}
+  .choice__tag{
+    display:block;font-size:13.2px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);font-weight:600;margin:0 0 8px;
+  }
+  .choice[aria-checked="true"] .choice__tag{color:var(--accent);}
+
+  .q.flag .q__title{color:var(--accent);}
+  .q.flag{background:linear-gradient(90deg,var(--accent-soft),transparent);}
+
+  /* per-question comment */
+  .comment{margin-top:24px;}
+  .comment__label{
+    display:block;font-size:13.2px;letter-spacing:.04em;color:var(--muted);
+    font-weight:600;margin:0 0 10px;
+  }
+  .comment__label em{font-style:normal;font-weight:400;color:#BDB8AD;letter-spacing:0;}
+  .comment__field{margin-top:0;}
+  .comment__field textarea{min-height:62px;font-size:18px;}
+
+  /* submit */
+  .submit-block{padding:48px 0 0;}
+  .btn{
+    font-family:var(--grotesk);font-size:19.2px;font-weight:600;cursor:pointer;
+    border-radius:10px;padding:15px 30px;border:1.5px solid var(--ink);
+    background:var(--ink);color:var(--paper);transition:transform .12s,opacity .2s;
+  }
+  .btn:hover{transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .btn--ghost{background:transparent;color:var(--ink);border-color:var(--hairline-strong);}
+  .submit-note{font-size:16.2px;color:var(--muted);margin:16px 0 0;max-width:48ch;}
+  .err{color:#9a3b2e;font-size:16.8px;margin:14px 0 0;display:none;}
+  .err.show{display:block;}
+
+  /* confirmation */
+  .done{display:none;padding:84px 0 60px;}
+  .done.show{display:block;animation:rise .5s ease both;}
+  @keyframes rise{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  .done__mark{font-family:var(--grotesk);font-weight:700;font-size:clamp(52.8px,10.2vw,84px);line-height:1;letter-spacing:-.03em;margin:0 0 14px;}
+  .done__mark em{font-style:normal;color:inherit;font-weight:700;}
+  .done__sub{color:var(--muted);max-width:50ch;margin:0 0 28px;}
+  .summary{border-top:1px solid var(--hairline);margin:8px 0 28px;}
+  .summary__row{display:flex;justify-content:space-between;gap:20px;padding:13px 0;border-bottom:1px solid var(--hairline);font-size:17.4px;align-items:baseline;}
+  .summary__q{color:var(--muted);max-width:62%;}
+  .summary__a{font-weight:600;text-align:right;}
+  .done__actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .copied{font-size:15.6px;color:var(--accent);font-weight:600;opacity:0;transition:opacity .2s;margin-top:12px;}
+  .copied.show{opacity:1;}
+
+  @media (max-width:560px){
+    .wrap{padding:0 20px 100px;}
+    .choices{grid-template-columns:1fr;}
+    .intro{padding:64px 0 32px;}
+    body{font-size:19.2px;}
+    .node{width:34px;height:34px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important;scroll-behavior:auto!important;}
+  }
+</style>
+</head>
+<body>
+  <div class="progress"><div class="progress__bar" id="bar"></div></div>
+  <div class="progress__count" id="count">0 / 11</div>
+
+  <main class="wrap" id="form">
+    <section class="intro">
+      <p class="eyebrow">Visual Identity</p>
+      <h1 class="mark">Saidwell <em>Questionnaire</em></h1>
+      <p class="intro__sub">A few quick gut-checks to steer the visual identity before we explore territories.</p>
+      <p class="lede">There are no right answers — we're after your instinct. Pick the point on each scale that feels truest. It takes about three minutes.</p>
+      <p class="tip"><strong>One ask:</strong> it's most useful if Jefferson and Grant each fill this in separately, so we can see where you align and where you don't.</p>
+    </section>
+
+    <section class="name-block">
+      <label class="field-label" for="name">Your name <span class="req">*</span></label>
+      <input type="text" id="name" placeholder="Add your name" autocomplete="name">
+    </section>
+
+    <div id="questions"></div>
+
+    <section class="name-block" style="border-bottom:none;">
+      <label class="field-label" for="notes">Anything else? <span style="text-transform:none;letter-spacing:0;font-weight:400;color:#BDB8AD;">— optional</span></label>
+      <textarea id="notes" placeholder="A caveat, a reference you love, a gut feeling you couldn't fit on a scale…"></textarea>
+    </section>
+
+    <section class="submit-block">
+      <button class="btn" id="send">Submit</button>
+      <p class="err" id="err"></p>
+      <p class="submit-note">Hitting submit sends your responses to Raredays, like a boss</p>
+    </section>
+  </main>
+
+  <section class="wrap done" id="done">
+    <h2 class="done__mark">Thank you for your response.</h2>
+    <p class="done__sub" id="doneSub">Your responses have been sent to Raredays.</p>
+  </section>
+
+<script>
+/* ----------------------------------------------------------------
+   Submitting POSTs the responses to FORMSPREE_ENDPOINT, which emails
+   them to RECIPIENT — no second step for the respondent.
+   If the POST ever fails, a mailto link is offered as a backup.
+------------------------------------------------------------------ */
+const FORMSPREE_ENDPOINT = "https://formspree.io/f/xnjkqzdy";
+const RECIPIENT = "ali@raredays.com";
+
+const scales = [
+  {n:"Q1", t:'What does "premium" feel like for Saidwell?',
+   l:"Understated & minimal", r:"Bold & expressive"},
+  {n:"Q2", t:"How should the brand come across when someone first encounters it?",
+   l:"Warm & human", r:"Authoritative & credible"},
+  {n:"Q3", t:"How should Saidwell relate to Jefferson's personal brand?",
+   l:"A standalone brand Jefferson endorses", r:"A Jefferson-fronted product"},
+  {n:"Q4", t:"How present should Jefferson himself — his face, his persona — be in the identity?",
+   l:"Largely absent — the brand stands on its own", r:"Central & recurring"},
+  {n:"Q5", t:"What should the wordmark and typography feel like?",
+   l:"Elegant, established and editorial", r:"Clean, modern and bold",
+   chip:"type"},
+  {n:"Q6", t:"How should the colour palette behave?",
+   l:"Restrained — minimal colours, powerful contrast", r:"Rich — vivid & colourful",
+   chip:"colour"},
+  {n:"Q7", t:"Next to legacy assessments (DISC, Myers-Briggs and the like), Saidwell should…",
+   l:"Lean into an expected, trusted look", r:"Be more offbeat — an original disruptor"},
+  {n:"Q8", t:"What should the visual world lean on?",
+   l:"Photography of real people", r:"Graphic, typographic or illustrative"},
+  {n:"Q9", t:"Someone gets their assessment and shares it — how should it feel?",
+   l:"Serious & professional — credible to a boss", r:"Personal & expressive — fun to share"},
+];
+
+const picks = [
+  {n:"Q10", t:"Saidwell should feel more like…",
+   a:{tag:"Option A", label:"A high-end consultancy — quality at a high price point"},
+   b:{tag:"Option B", label:"A sharp modern tech app — dependable, great features"}},
+  {n:"Q11", t:"Which would be worse?",
+   a:{tag:"Option A", label:"Saidwell looking too corporate"},
+   b:{tag:"Option B", label:"Saidwell looking too casual"}},
+];
+
+const TOTAL = scales.length + picks.length;
+const answers = {}; // key -> {label, value}
+const comments = {}; // key -> string
+
+const commentHTML = (qn) => `
+    <div class="comment">
+      <span class="comment__label">Comment, link or reference <em>— optional</em></span>
+      <div class="comment__field" id="comment-${qn}">
+        <textarea data-q="${qn}" placeholder="The why behind your pick, a link, or any reference"></textarea>
+      </div>
+    </div>`;
+
+const chipHTML = (kind, side) => {
+  if(kind === "type"){
+    return side === "l"
+      ? '<span class="pole__chip"><span class="chip-aa serif">Aa</span></span>'
+      : '<span class="pole__chip"><span class="chip-aa sans">Aa</span></span>';
+  }
+  if(kind === "colour"){
+    return side === "l"
+      ? '<span class="pole__chip"><span class="chip-swatch"><span style="background:#17171A"></span><span style="background:#9A958B"></span><span style="background:#FBFAF8"></span></span></span>'
+      : '<span class="pole__chip"><span class="chip-swatch"><span style="background:#26474B"></span><span style="background:#C8923D"></span><span style="background:#9a3b2e"></span></span></span>';
+  }
+  return "";
+};
+
+const container = document.getElementById("questions");
+
+scales.forEach(q => {
+  const sec = document.createElement("section");
+  sec.className = "q";
+  sec.id = "q-" + q.n;
+  sec.innerHTML = `
+    <div class="q__head">
+      <span class="q__num">${q.n}</span>
+      <h2 class="q__title">${q.t}</h2>
+    </div>
+    <div class="scale">
+      <div class="scale__poles">
+        <div class="pole pole--left">${q.chip?chipHTML(q.chip,"l"):""}${q.l}</div>
+        <div class="pole pole--right">${q.chip?chipHTML(q.chip,"r"):""}${q.r}</div>
+      </div>
+      <div class="scale__track" role="radiogroup" aria-label="${q.t}">
+        <div class="scale__line"></div>
+        <div class="scale__fill" id="fill-${q.n}"></div>
+        ${[1,2,3,4,5].map(v=>`<button class="node" type="button" role="radio" aria-checked="false" data-q="${q.n}" data-v="${v}" aria-label="Position ${v} of 5"></button>`).join("")}
+      </div>
+    </div>${commentHTML(q.n)}`;
+  container.appendChild(sec);
+});
+
+picks.forEach(q => {
+  const sec = document.createElement("section");
+  sec.className = "q";
+  sec.id = "q-" + q.n;
+  sec.innerHTML = `
+    <div class="q__head">
+      <span class="q__num">${q.n}</span>
+      <h2 class="q__title">${q.t}</h2>
+    </div>
+    <div class="choices" role="radiogroup" aria-label="${q.t}">
+      <button class="choice" type="button" role="radio" aria-checked="false" data-q="${q.n}" data-v="A" data-label="${q.a.label}">
+        <span class="choice__tag">${q.a.tag}</span>${q.a.label}
+      </button>
+      <button class="choice" type="button" role="radio" aria-checked="false" data-q="${q.n}" data-v="B" data-label="${q.b.label}">
+        <span class="choice__tag">${q.b.tag}</span>${q.b.label}
+      </button>
+    </div>${commentHTML(q.n)}`;
+  container.appendChild(sec);
+});
+
+// comment fields (always visible): capture text
+container.querySelectorAll(".comment__field").forEach(field=>{
+  const ta = field.querySelector("textarea");
+  const q = ta.dataset.q;
+  ta.addEventListener("input", ()=>{ comments[q] = ta.value; });
+});
+
+function updateProgress(){
+  const done = Object.keys(answers).length;
+  document.getElementById("bar").style.width = (done/TOTAL*100) + "%";
+  document.getElementById("count").textContent = done + " / " + TOTAL;
+}
+
+// scale clicks
+container.querySelectorAll(".node").forEach(node=>{
+  node.addEventListener("click", ()=>{
+    const q = node.dataset.q, v = +node.dataset.v;
+    const group = node.parentElement;
+    group.querySelectorAll(".node").forEach(n=>n.setAttribute("aria-checked","false"));
+    node.setAttribute("aria-checked","true");
+    document.getElementById("fill-"+q).style.width = "calc(" + ((v-1)/4) + " * (100% - 34px))";
+    const meta = scales.find(s=>s.n===q);
+    answers[q] = {value:v, label:`${v}/5  ·  ${meta.l}  →  ${meta.r}`};
+    document.getElementById("q-"+q).classList.remove("flag");
+    updateProgress();
+  });
+  node.addEventListener("keydown", e=>{
+    const sibs = [...node.parentElement.querySelectorAll(".node")];
+    const i = sibs.indexOf(node);
+    if(e.key==="ArrowRight"||e.key==="ArrowDown"){e.preventDefault();(sibs[i+1]||sibs[i]).focus();(sibs[i+1]||sibs[i]).click();}
+    if(e.key==="ArrowLeft"||e.key==="ArrowUp"){e.preventDefault();(sibs[i-1]||sibs[i]).focus();(sibs[i-1]||sibs[i]).click();}
+  });
+});
+
+// pick clicks
+container.querySelectorAll(".choice").forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const q = btn.dataset.q;
+    btn.parentElement.querySelectorAll(".choice").forEach(b=>b.setAttribute("aria-checked","false"));
+    btn.setAttribute("aria-checked","true");
+    answers[q] = {value:btn.dataset.v, label:btn.dataset.label};
+    document.getElementById("q-"+q).classList.remove("flag");
+    updateProgress();
+  });
+});
+
+function buildBody(name, notes){
+  const lines = [];
+  lines.push("Saidwell — Visual Identity Direction");
+  lines.push("Filled in by: " + name);
+  lines.push(new Date().toLocaleString("en-GB",{dateStyle:"long",timeStyle:"short"}));
+  lines.push("");
+  lines.push("— SCALES (1–5) —");
+  scales.forEach(q=>{
+    lines.push(`${q.n}. ${q.t}`);
+    lines.push(`    ${answers[q.n].label}`);
+    if(comments[q.n] && comments[q.n].trim()) lines.push(`    Comment: ${comments[q.n].trim()}`);
+    lines.push("");
+  });
+  lines.push("— GUT PICKS —");
+  picks.forEach(q=>{
+    lines.push(`${q.n}. ${q.t}`);
+    lines.push(`    ${answers[q.n].label}`);
+    if(comments[q.n] && comments[q.n].trim()) lines.push(`    Comment: ${comments[q.n].trim()}`);
+    lines.push("");
+  });
+  if(notes.trim()){
+    lines.push("— NOTES —");
+    lines.push(notes.trim());
+  }
+  return lines.join("\n");
+}
+
+let lastMailto = "";
+
+function buildSummary(){
+  const wrap = document.getElementById("summary");
+  wrap.innerHTML = "";
+  [...scales, ...picks].forEach(q=>{
+    const a = answers[q.n];
+    const short = (a.value === "A" || a.value === "B") ? a.label : a.value + "/5";
+    const row = document.createElement("div");
+    row.className = "summary__row";
+    const note = (comments[q.n] && comments[q.n].trim())
+      ? `<span style="display:block;color:var(--accent);font-weight:400;font-size:15.6px;margin-top:5px;">“${comments[q.n].trim()}”</span>` : "";
+    row.innerHTML = `<span class="summary__q">${q.n}. ${q.t}${note}</span><span class="summary__a">${short}</span>`;
+    wrap.appendChild(row);
+  });
+}
+
+document.getElementById("send").addEventListener("click", async ()=>{
+  const name = document.getElementById("name").value.trim();
+  const notes = document.getElementById("notes").value;
+  const err = document.getElementById("err");
+
+  if(!name){
+    err.textContent = "Add your name first so Ali knows whose instincts these are.";
+    err.classList.add("show");
+    document.getElementById("name").focus();
+    document.getElementById("name").scrollIntoView({block:"center"});
+    return;
+  }
+  const missing = [...scales, ...picks].filter(q=>!answers[q.n]);
+  if(missing.length){
+    err.textContent = `Still ${missing.length} to go — ${missing.map(m=>m.n).join(", ")}.`;
+    err.classList.add("show");
+    missing.forEach(m=>document.getElementById("q-"+m.n).classList.add("flag"));
+    document.getElementById("q-"+missing[0].n).scrollIntoView({block:"center"});
+    return;
+  }
+  err.classList.remove("show");
+
+  const body = buildBody(name, notes);
+  const subject = `Saidwell Questionnaire · ${name}`;
+
+  const sendBtn = document.getElementById("send");
+  sendBtn.disabled = true;
+  sendBtn.textContent = "Sending…";
+
+  let sent = false, detail = "";
+  try{
+    const params = new URLSearchParams();
+    params.append("name", name);
+    params.append("_subject", subject);
+    params.append("message", body);
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method:"POST",
+      headers:{"Content-Type":"application/x-www-form-urlencoded","Accept":"application/json"},
+      body: params.toString()
+    });
+    sent = res.ok;
+    if(!res.ok){
+      try{ const j = await res.json(); detail = (j.errors && j.errors.map(e=>e.message).join("; ")) || ("HTTP " + res.status); }
+      catch(_){ detail = "HTTP " + res.status; }
+    }
+  }catch(e){ sent = false; detail = e.message || "network error"; }
+
+  if(sent){
+    document.getElementById("form").style.display = "none";
+    document.getElementById("done").classList.add("show");
+    window.scrollTo({top:0, behavior:"smooth"});
+  }else{
+    sendBtn.disabled = false;
+    sendBtn.textContent = "Submit";
+    console.error("Formspree submit failed:", detail);
+    const mailto = `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    err.innerHTML = `Couldn't send (${detail}). <a href="${mailto}" style="color:var(--accent);text-decoration:underline;">Email your answers instead</a>, or try again.`;
+    err.classList.add("show");
+  }
+});
+
+updateProgress();
+</script>
+</body>
+</html>
